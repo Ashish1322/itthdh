@@ -32,6 +32,11 @@ const UserSchema = new mongoose.Schema({
     required: true,
     default: false,
   },
+  departmentId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "HisDeparments",
+    required: false,
+  },
   // dob  address
 });
 

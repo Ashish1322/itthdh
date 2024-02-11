@@ -1,8 +1,14 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
-const authRoutes = require("./routes/auth");
 const dotenv = require("dotenv");
+
+// Import Middleware
+const { isLoggedIn, isAdmin } = require("./middlewares/auth");
+
+// Import routes
+const authRoutes = require("./routes/auth");
+const adminRoutes = require("./routes/admin");
 
 const app = express();
 const PORT = 3001;
@@ -12,6 +18,8 @@ app.use(bodyParser.json());
 
 // configure routes
 app.use("/auth", authRoutes);
+app.use("/admin", isLoggedIn, isAdmin, adminRoutes);
+
 dotenv.config();
 
 // connection to database

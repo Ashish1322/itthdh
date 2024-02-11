@@ -31,8 +31,7 @@ const login = async (req, res) => {
     const token = jwt.sign(
       {
         _id: user._id,
-        email: user.email,
-        name: user.name,
+        role: user.role,
       },
       process.env.TOKEN_SECRET
     );
@@ -67,14 +66,15 @@ const signup = async (req, res) => {
       gender,
       phoneNumber,
       password: hashedPassword,
+      role: "ADMIN",
     });
 
     // send activation email
     let mailTransporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
-        user: "a.m2001nov@gmail",
-        pass: "yedhcspgxsfnwtbh",
+        user: process.env.EMAIL,
+        pass: process.env.PASSWORD,
       },
     });
 
@@ -98,7 +98,13 @@ const signup = async (req, res) => {
     };
 
     // sending the email
-    // mailTransporter.sendMail(mailDetails);
+    mailTransporter.sendMail(mailDetails, function (error, info) {
+      if (error) {
+        console.log(error);
+      } else {
+        console.log("Email sent: " + info.response);
+      }
+    });
     console.log(url);
 
     return res.status(200).json({
@@ -127,4 +133,36 @@ const verifyAccount = async (req, res) => {
   }
 };
 
-module.exports = { login, signup, verifyAccount };
+const changePassword = async (req, res) => {
+  try {
+    const { oldPassword, newPassword } = req.body;
+    if (!newPassword || newPassword.length == 0) {
+      return res
+        .status(400)
+        .json({ success: false, message: "New password is requreid" });
+    }
+
+    // 1. Fetch the user
+    const user = await User.findById(req.user._id);
+
+    // 2. Vefify the oldPassword
+    const result = await bcrypt.compare(oldPassword, user.password);
+
+    if (!result) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Password is not correct!" });
+    }
+
+    // 3. Change the password
+    const hashedPassword = await bcrypt.hash(newPassword, 6);
+    user.password = hashedPassword;
+    await user.save();
+
+    return res.status(200).json({ success: true, message: "Password changed" });
+  } catch (err) {
+    return res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+module.exports = { login, signup, verifyAccount, changePassword };
