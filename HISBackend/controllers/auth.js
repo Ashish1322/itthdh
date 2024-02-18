@@ -36,9 +36,20 @@ const login = async (req, res) => {
       process.env.TOKEN_SECRET
     );
 
-    return res
-      .status(200)
-      .json({ success: true, message: "Login Success", accessToken: token });
+    return res.status(200).json({
+      success: true,
+      message: "Login Success",
+      user: {
+        name: user.name,
+        email: user.email,
+        phoneNumber: user.phoneNumber,
+        role: user.role,
+        about: user.about,
+        address: user.address,
+        imgUrl: user.imgUrl,
+        accessToken: token,
+      },
+    });
   } catch (err) {
     return res.status(500).json({ success: false, messaeg: err.message });
   }

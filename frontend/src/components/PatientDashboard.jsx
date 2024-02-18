@@ -75,7 +75,7 @@ export default function PatientDashboard() {
               aria-expanded="false"
             >
               <img
-                src="https://github.com/mdo.png"
+                src={user && user.imgUrl}
                 alt=""
                 width={32}
                 height={32}

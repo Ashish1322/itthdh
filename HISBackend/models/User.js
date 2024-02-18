@@ -37,7 +37,22 @@ const UserSchema = new mongoose.Schema({
     ref: "HisDeparments",
     required: false,
   },
-  // dob  address
+  address: {
+    street: String,
+    city: String,
+    state: String,
+    zip: String,
+  },
+  about: {
+    type: String,
+    required: true,
+    default: "",
+  },
+  imgUrl: {
+    type: String,
+    required: true,
+    default: "https://bootdey.com/img/Content/avatar/avatar7.png",
+  },
 });
 
 module.exports = mongoose.model("Hisusers", UserSchema);

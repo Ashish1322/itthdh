@@ -1,6 +1,25 @@
-import React from "react";
+import React, { useContext, useState, useRef } from "react";
+import { HisContext } from "../../HisContext";
 import "./updateProfile.css";
 export default function UpdateProfile() {
+  const { user, uploadProfilePic, updateProfile } = useContext(HisContext);
+
+  const [name, setName] = useState(user ? user.name : "");
+  const [phone, setPhone] = useState(user ? user.phoneNumber : "");
+  const [about, setAbout] = useState(user ? user.about : "");
+  const [street, setStreet] = useState(
+    user && user.address ? user.address.street : ""
+  );
+  const [city, setCity] = useState(
+    user && user.address ? user.address.city : ""
+  );
+  const [state, setState] = useState(
+    user && user.address ? user.address.state : ""
+  );
+  const [zip, setZip] = useState(user && user.address ? user.address.zip : "");
+
+  const imageRef = useRef(null);
+
   return (
     <div className="container">
       <div className="row mt-5 gutters">
@@ -9,21 +28,25 @@ export default function UpdateProfile() {
             <div className="card-body">
               <div className="account-settings">
                 <div className="user-profile">
-                  <div className="user-avatar">
-                    <img
-                      src="https://bootdey.com/img/Content/avatar/avatar7.png"
-                      alt="Maxwell Admin"
-                    />
+                  <div
+                    onClick={() => imageRef.current.click()}
+                    className="user-avatar"
+                  >
+                    <img src={user && user.imgUrl} alt="Maxwell Admin" />
                   </div>
-                  <h5 className="user-name">Yuki Hayashi</h5>
-                  <h6 className="user-email">yuki@Maxwell.com</h6>
+                  <input
+                    onChange={(e) => uploadProfilePic(e.currentTarget.files[0])}
+                    style={{ display: "none" }}
+                    ref={imageRef}
+                    type="file"
+                    accept="image/png, image/jpeg"
+                  />
+                  <h5 className="user-name">{user && user.name}</h5>
+                  <h6 className="user-email">{user && user.email}</h6>
                 </div>
                 <div className="about">
                   <h5>About</h5>
-                  <p>
-                    I'm Yuki. Full Stack Designer I enjoy creating user-centric,
-                    delightful and human experiences.
-                  </p>
+                  <p>{user && user.about}</p>
                 </div>
               </div>
             </div>
@@ -40,6 +63,8 @@ export default function UpdateProfile() {
                   <div className="form-group">
                     <label htmlFor="fullName">Full Name</label>
                     <input
+                      value={name}
+                      onChange={(e) => setName(e.currentTarget.value)}
                       type="text"
                       className="form-control"
                       id="fullName"
@@ -51,6 +76,8 @@ export default function UpdateProfile() {
                   <div className="form-group">
                     <label htmlFor="eMail">Email</label>
                     <input
+                      value={user && user.email}
+                      disabled
                       type="email"
                       className="form-control"
                       id="eMail"
@@ -62,6 +89,8 @@ export default function UpdateProfile() {
                   <div className="form-group">
                     <label htmlFor="phone">Phone</label>
                     <input
+                      value={phone}
+                      onChange={(e) => setPhone(e.currentTarget.value)}
                       type="text"
                       className="form-control"
                       id="phone"
@@ -73,6 +102,8 @@ export default function UpdateProfile() {
                   <div className="form-group">
                     <label htmlFor="website">About</label>
                     <input
+                      value={about}
+                      onChange={(e) => setAbout(e.currentTarget.value)}
                       type="url"
                       className="form-control"
                       id="website"
@@ -89,6 +120,8 @@ export default function UpdateProfile() {
                   <div className="form-group">
                     <label htmlFor="Street">Street</label>
                     <input
+                      value={street}
+                      onChange={(e) => setStreet(e.currentTarget.value)}
                       type="name"
                       className="form-control"
                       id="Street"
@@ -100,6 +133,8 @@ export default function UpdateProfile() {
                   <div className="form-group">
                     <label htmlFor="ciTy">City</label>
                     <input
+                      value={city}
+                      onChange={(e) => setCity(e.currentTarget.value)}
                       type="name"
                       className="form-control"
                       id="ciTy"
@@ -111,6 +146,8 @@ export default function UpdateProfile() {
                   <div className="form-group">
                     <label htmlFor="sTate">State</label>
                     <input
+                      value={state}
+                      onChange={(e) => setState(e.currentTarget.value)}
                       type="text"
                       className="form-control"
                       id="sTate"
@@ -122,6 +159,8 @@ export default function UpdateProfile() {
                   <div className="form-group">
                     <label htmlFor="zIp">Zip Code</label>
                     <input
+                      value={zip}
+                      onChange={(e) => setZip(e.currentTarget.value)}
                       type="text"
                       className="form-control"
                       id="zIp"
@@ -134,6 +173,14 @@ export default function UpdateProfile() {
                 <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                   <div className="text-right">
                     <button
+                      onClick={() =>
+                        updateProfile(name, phone, about, {
+                          city,
+                          zip,
+                          state,
+                          street,
+                        })
+                      }
                       type="button"
                       id="submit"
                       name="submit"

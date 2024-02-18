@@ -21,4 +21,24 @@ const isAdmin = (req, res, next) => {
       .json({ success: false, message: "You Don't have access to this route" });
   }
 };
-module.exports = { isLoggedIn, isAdmin };
+
+const isDoctor = (req, res, next) => {
+  if (req.user && req.user.role == "DOCTOR") {
+    next();
+  } else {
+    return res
+      .status(401)
+      .json({ success: false, message: "You Don't have access to this route" });
+  }
+};
+
+const isPatient = (req, res, next) => {
+  if (req.user && req.user.role == "PATIENT") {
+    next();
+  } else {
+    return res
+      .status(401)
+      .json({ success: false, message: "You Don't have access to this route" });
+  }
+};
+module.exports = { isLoggedIn, isAdmin, isDoctor, isPatient };

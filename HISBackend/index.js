@@ -2,6 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const dotenv = require("dotenv");
+const cors = require("cors");
 
 // Import Middleware
 const { isLoggedIn, isAdmin } = require("./middlewares/auth");
@@ -9,16 +10,19 @@ const { isLoggedIn, isAdmin } = require("./middlewares/auth");
 // Import routes
 const authRoutes = require("./routes/auth");
 const adminRoutes = require("./routes/admin");
+const userRoutes = require("./routes/user");
 
 const app = express();
 const PORT = 3001;
 
 // middlewares
 app.use(bodyParser.json());
+app.use(cors());
 
 // configure routes
 app.use("/auth", authRoutes);
 app.use("/admin", isLoggedIn, isAdmin, adminRoutes);
+app.use("/user", isLoggedIn, userRoutes);
 
 dotenv.config();
 
